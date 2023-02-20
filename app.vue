@@ -13,7 +13,7 @@
     <nav class="top">
       <button class="eightbit-btn eightbit-btn--proceed" style="filter:saturate(0) brightness(.9)" @click="editMode=false">&lt; Zurück</button>
       <h1>Geräte-ID: {{ id }}</h1>
-        <button :class="{'eightbit-btn':true, 'eightbit-btn--proceed':unsafedChanges}" @click="storeConfig()">{{ speichernText }}</button>
+        <button :class="{'eightbit-btn':true, 'eightbit-btn--proceed':unsavedChanges}" @click="storeConfig()">{{ speichernText }}</button>
     </nav>
 
     <main>
@@ -441,7 +441,7 @@ const storeConfig = async () => {
     body: JSON.stringify(config.value)
   }).then(() => {
     speichernText.value = "Gespeichert."
-    unsafedChanges.value = false
+    unsavedChanges.value = false
     setTimeout(() => {
       speichernText.value = "Speichern >"
     }, 1000)
@@ -560,8 +560,8 @@ const tryPreview = (moduleName) => {
 const view = ref("/ui/view.png")
 
 // dev mode
-id.value = '123'
-edit()
+// id.value = '123'
+// edit()
 
 // if config.value.colors is an array, call drawModule
 /*
@@ -624,11 +624,11 @@ const loadModules = async () => {
 }
 loadModules()
 
-const unsafedChanges = ref(false)
+const unsavedChanges = ref(false)
 
 // watch for changes in config.value or any of its children
 watch(config, () => {
-  unsafedChanges.value = true
+  unsavedChanges.value = true
 }, {deep: true})
 
 </script>
