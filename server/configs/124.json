@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "colors": [
+    {
+      "name": "Primary",
+      "hex": "#FF0077"
+    },
+    {
+      "name": "Secondary",
+      "hex": "#007700"
+    },
+    {
+      "name": "Tertiary",
+      "hex": "#FF00FF"
+    },
+    {
+      "name": "Quaternary",
+      "hex": "#FF7777"
+    }
+  ],
+  "modules": [
+    {
+      "name": "IcoDesk_Weather",
+      "version": "1.0.1",
+      "config": {
+        "city": "Berlin",
+        "refresh_interval": 60
+      }
+    },
+    {
+      "name": "IcoDesk_Sprichwuerfel",
+      "version": "1.0.0",
+      "config": {
+        "language": "de",
+        "nsfw": true
+      }
+    },
+    {
+      "name": "IcoDesk_Weather",
+      "version": "1.0.1",
+      "config": {
+        "city": "Dresden",
+        "refresh_interval": 30
+      }
+    },
+    {
+      "name": "IcoDesk_Logo",
+      "version": "1.0.0",
+      "config": {
+        "speed": 500,
+        "animation": false
+      }
+    }
+  ]
+}
