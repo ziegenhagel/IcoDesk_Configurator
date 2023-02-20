@@ -72,7 +72,7 @@
         <div v-else>Keine Module aktiviert.</div>
 
         <h2>Bibliothek</h2>
-        <div class="flex" v-if="modules" v-for="(module,index) in modules">
+        <div class="flex" @mouseover="preview(module.view)" v-if="modules" v-for="(module,index) in modules">
           <div>{{ module.name }}</div>
           <div class="icons">
             <svg @click="appendModule(index)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -499,12 +499,10 @@ const drawModule = () => {
     return
   }
 
-  // clear canvas
-  ctx.clearRect(0, 0, 128, 160)
-
   // draw /view.jpg onto canvas
   const img = new Image()
-  img.src = "/ui/view.png"
+  img.src = view.value
+  img.crossOrigin = "Anonymous";
   img.onload = () => {
     ctx.drawImage(img, 0, 0)
 
@@ -545,16 +543,25 @@ const drawModule = () => {
 
 }
 
+const preview = (url) => {
+  view.value = url
+  drawModule()
+}
+
+const view = ref("/ui/view.png")
+
 // dev mode
 id.value = '123'
 edit()
 
 // if config.value.colors is an array, call drawModule
+/*
 setInterval(() => {
   if (config.value?.colors) {
     drawModule()
   }
 }, 5000)
+*/
 
 setTimeout(() => {
   drawModule()
@@ -587,6 +594,9 @@ const loadModules = async () => {
 
                 // log the data
                 console.log("got data", data)
+
+                //https://github.com/tillmii/IcoMod_Logo/blob/main/WebInfo/Views/View01.png
+                data.view = repo.replace('github.com', 'raw.githubusercontent.com') + 'main/WebInfo/Views/View01.png'
 
                 // add the repo to the list of known modules
                 modules.value.push(data)
