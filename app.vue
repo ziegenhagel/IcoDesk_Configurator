@@ -17,7 +17,7 @@
     </nav>
 
     <main>
-      <aside>
+      <aside v-if="modules.length">
         <h2>Farben</h2>
         <div v-if="config?.colors" v-for="color in config.colors">
           <input v-model="color.hex" @change="drawModule()" type="color"/>
@@ -84,6 +84,10 @@
         </div>
         <div v-else>Keine Module gefunden.</div>
 
+      </aside>
+      <aside v-else>
+        <h2>Laden ...</h2>
+        <pre>{{ modules }}</pre>
       </aside>
       <div id="preview">
         <!-- <div id="cube_overlay" :style="'hue-rotate(-930deg) brightness(4)'"></div> -->
@@ -211,7 +215,7 @@ aside {
   top: 0;
   background-image: url("ui/cube_overlay.png");
   height: 100%;
-  width:100%;
+  width: 100%;
   background-size: auto 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -410,7 +414,7 @@ const underlineVisible: boolean = ref(false)
 const speichernText: string = ref("Speichern >")
 
 // remote info
-const modules = useModules()
+const modules = ref([])
 
 // have underline blink every .5 seconds
 setInterval(() => {
@@ -461,7 +465,7 @@ const disposeModule = (index: number) => {
 const appendModule = (index: any) => {
 
   // get module
-  const module = modules[index]
+  const module = modules.value[index]
 
   // create new module
   const newModule = {
@@ -480,7 +484,7 @@ const appendModule = (index: any) => {
 
 const getOptions = (name: String) => {
   // from all the modules find the one with the name and get .config
-  return modules.find((module: any) => module.name === name)?.config
+  return modules.value.find((module: any) => module.name === name)?.config
 }
 
 const predefinedColors = ['#000000', '#ffffff', "#0000ff", "#ff0000"]
@@ -556,4 +560,49 @@ setTimeout(() => {
   drawModule()
 }, 200)
 
+const loadModules = async () => {
+
+  // get an overview of all modules
+  // the file of known modules is located in git repo
+  const url = 'https://raw.githubusercontent.com/tillmii/IcoDesk/main/WebInfo/Modules.json'
+
+  // get the modules with fetch
+  await fetch(url)
+      .then(response => response.json())
+      .then(data => {
+
+        // for each repo, get the IcoMod.json
+        data.forEach(async (repo: string) => {
+
+          // get the IcoMod.json
+          // origin url is https://github.com/tillmii/IcoMod_Weather/ to https://raw.githubusercontent.com/tillmii/IcoMod_Weather/main/WebInfo/IcoMod.json
+          const url = repo.replace('github.com', 'raw.githubusercontent.com') + 'main/WebInfo/IcoMod.json'
+
+          // just log the url
+          console.log("getting info from repo", url)
+
+          await fetch(url)
+              .then(response => response.json())
+              .then(data => {
+
+                // log the data
+                console.log("got data", data)
+
+                // add the repo to the list of known modules
+                modules.value.push(data)
+
+              })
+              .catch(err => {
+                console.log(err)
+              })
+
+        })
+      })
+      .catch(error => {
+        console.error(error)
+      })
+
+}
+
+loadModules()
 </script>
