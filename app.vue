@@ -1,6 +1,7 @@
 <template>
   <div v-if="!editMode" class="screen">
     <div class="gap flex-col form">
+
       <h1 style="margin:auto;text-align: center;margin-bottom: 1em">IcoDesk<br/>Configurator<span
           :style="{visibility: underlineVisible ? 'visible' : 'hidden'}">_</span></h1>
       <p style="margin:0;text-align: center">Geräte-ID:</p>
@@ -19,7 +20,7 @@
       <aside>
         <h2>Farben</h2>
         <div v-if="config?.colors" v-for="color in config.colors">
-          <input v-model="color.hex" type="color"/>
+          <input v-model="color.hex" @change="drawModule()" type="color"/>
           {{ color.name }}
         </div>
         <h2>Module</h2>
@@ -85,7 +86,8 @@
 
       </aside>
       <div id="preview">
-        <img id="module" src="ui/View01.jpg"/>
+        <!-- <div id="cube_overlay" :style="'hue-rotate(-930deg) brightness(4)'"></div> -->
+        <canvas id="module" ref="canvas" width="128" height="160" style="background:#121513"></canvas>
       </div>
     </main>
   </div>
@@ -95,7 +97,6 @@
 .module {
   background: #0005;
   padding: 6px 4px;
-  padding-bottom: 0;
   margin-top: 5px;
   border: 1px outset #000;
 }
@@ -203,6 +204,19 @@ aside {
   position: relative;
 }
 
+#cube_overlay {
+  position: absolute;
+  filter: hue-rotate(226deg) saturate(3) brightness(1.5);
+  z-index: 99;
+  top: 0;
+  background-image: url("ui/cube_overlay.png");
+  height: 100%;
+  width:100%;
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 #preview svg {
   height: 5vh;
   width: 5vh;
@@ -216,7 +230,6 @@ aside {
 
 #preview nav {
   position: absolute;
-  position: absolute;
   top: 45%;
   left: 0;
   right: 0;
@@ -225,6 +238,7 @@ aside {
   padding: 1rem;
   margin-left: -10vw;
 }
+
 
 #module {
   position: absolute;
@@ -378,8 +392,8 @@ select, input {
 
 .option input, .option option, .option select {
   padding: 0 2px;
-  width:100%;
-  flex:1;
+  width: 100%;
+  flex: 1;
   line-height: 1rem;
   font-size: 1rem;
   box-sizing: border-box;
@@ -458,7 +472,7 @@ const appendModule = (index: any) => {
 
   // add config
   for (const key in module.config) {
-    newModule.config[key] = module.config[key].default
+    newModule.config[module.config[key].name] = module.config[key].default
   }
 
   config.value.modules.push(newModule)
@@ -469,7 +483,77 @@ const getOptions = (name: String) => {
   return modules.find((module: any) => module.name === name)?.config
 }
 
+const predefinedColors = ['#000000', '#ffffff', "#0000ff", "#ff0000"]
+
+const drawModule = () => {
+  if (typeof window === 'undefined') return
+
+  // get 2d context from canvas
+  const ctx = document.getElementById("module")?.getContext("2d")
+  if (!ctx) {
+    console.error("Could not get 2d context from canvas")
+    return
+  }
+
+  // clear canvas
+  ctx.clearRect(0, 0, 128, 160)
+
+  // draw /view.jpg onto canvas
+  const img = new Image()
+  img.src = "/ui/view.png"
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0)
+
+    // replace white color pixels with red
+    const imgData = ctx.getImageData(0, 0, 128, 160)
+
+    // for each pixel
+    for (let i = 0; i < imgData.data.length; i += 4) {
+
+      let hasChanged = false
+
+      // for each predefined color
+      predefinedColors.forEach((color, index) => {
+
+        // should convert to
+        const newColor = config.value.colors[index].hex
+
+        // if pixel matches color
+        if (!hasChanged &&
+            imgData.data[i] === parseInt(color.substring(1, 3), 16) &&
+            imgData.data[i + 1] === parseInt(color.substring(3, 5), 16) &&
+            imgData.data[i + 2] === parseInt(color.substring(5, 7), 16)) {
+
+          // replace with the new color
+          imgData.data[i] = parseInt(newColor.substring(1, 3), 16)
+          imgData.data[i + 1] = parseInt(newColor.substring(3, 5), 16)
+          imgData.data[i + 2] = parseInt(newColor.substring(5, 7), 16)
+
+          hasChanged = true
+        }
+
+      })
+
+    }
+    // put image data back onto canvas
+    ctx.putImageData(imgData, 0, 0)
+  }
+
+}
+
 // dev mode
 id.value = '123'
 edit()
+
+// if config.value.colors is an array, call drawModule
+setInterval(() => {
+  if (config.value?.colors) {
+    drawModule()
+  }
+}, 5000)
+
+setTimeout(() => {
+  drawModule()
+}, 200)
+
 </script>
