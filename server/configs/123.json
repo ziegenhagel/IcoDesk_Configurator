@@ -1,1 +1,44 @@
-{"version":"1.0.0","colors":[{"name":"Primary","hex":"#000000"},{"name":"Secondary","hex":"#ffffff"},{"name":"Tertiary","hex":"#006d8f"},{"name":"Quaternary","hex":"#ff2600"}],"modules":[{"name":"Sprichwuerfel","version":"1.0.0","config":{"language":"de","nsfw":false}},{"name":"Weather","version":"1.0.1","config":{"city":"Berlin","refresh_interval":60}},{"name":"Logo","version":"2.0.0","config":{"speed":1000,"animation":true}}]}
+{
+  "version": "1.0.0",
+  "colors": [
+    {
+      "name": "Primary",
+      "hex": "#000000"
+    },
+    {
+      "name": "Secondary",
+      "hex": "#ffffff"
+    },
+    {
+      "name": "Tertiary",
+      "hex": "#006d8f"
+    },
+    {
+      "name": "Quaternary",
+      "hex": "#ff2600"
+    }
+  ],
+  "modules": [
+    {
+      "name": "Sprichwuerfel",
+      "config": {
+        "language": "de",
+        "nsfw": false
+      }
+    },
+    {
+      "name": "Weather",
+      "config": {
+        "city": "Berlin",
+        "refresh_interval": 60
+      }
+    },
+    {
+      "name": "Logo",
+      "config": {
+        "speed": 1000,
+        "animation": true
+      }
+    }
+  ]
+}

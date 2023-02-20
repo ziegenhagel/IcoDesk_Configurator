@@ -12,7 +12,7 @@
     <nav class="top">
       <button class="eightbit-btn eightbit-btn--proceed" @click="editMode=false">&lt; Zurück</button>
       <h1>Geräte-ID: {{ id }}</h1>
-      <button class="eightbit-btn" @click="storeConfig()">{{speichernText}}</button>
+      <button class="eightbit-btn" @click="storeConfig()">{{ speichernText }}</button>
     </nav>
 
     <main>
@@ -23,38 +23,53 @@
           {{ color.name }}
         </div>
         <h2>Module</h2>
-        <div class="flex" v-if="config?.modules" v-for="module in config.modules">
-          <div>{{ module.name }}</div>
+        <div class="flex" v-if="config?.modules.length>0" v-for="(module,index) in config.modules">
+          <div>{{ index }}-{{ module.name }}</div>
           <div class="icons">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            <svg @click="moveModule(index,false)" :class="{disabled:index==0}" xmlns="http://www.w3.org/2000/svg"
+                 fill="none" viewBox="0 0 24 24"
+                 stroke-width="1.5"
                  stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"/>
             </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            <svg @click="moveModule(index,true)" :class="{disabled:index>=config.modules.length-1}"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke-width="1.5"
                  stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
             </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                 stroke="currentColor" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
-            </svg>
+
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                  stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round"
                     d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/>
             </svg>
+            <svg @click="disposeModule(index)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+
           </div>
         </div>
+        <div v-else>Keine Module aktiviert.</div>
+
+        <h2>Bibliothek</h2>
+        <div class="flex" v-if="modules" v-for="(module,index) in modules">
+          <div>{{ module.name }}</div>
+          <div class="icons">
+            <svg @click="appendModule(index)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+            </svg>
+          </div>
+        </div>
+        <div v-else>Keine Module gefunden.</div>
+
       </aside>
-      <div id="preview">
-        <img id="view" src="ui/View01.jpg"/>
+      <div id="premodule">
+        <img id="module" src="ui/View01.jpg"/>
       </div>
     </main>
-
-    <pre>{{ modules }}</pre>
-    <pre>{{ config }}</pre>
-
   </div>
 </template>
 
@@ -147,7 +162,7 @@ aside {
   color: #f3f1e7;
 }
 
-#preview {
+#premodule {
   flex: 4;
   height: 100%;
   background-color: #000;
@@ -158,7 +173,7 @@ aside {
   position: relative;
 }
 
-#view {
+#module {
   position: absolute;
   border: 2px inset #000;
   box-shadow: 0px 0px 2px #000;
@@ -242,12 +257,17 @@ button {
   margin: 0 1px;
 }
 
+.icons svg.disabled {
+  pointer-events: none;
+  border: transparent;
+  color: #fff0;
+}
+
 .icons svg:hover {
   background: #0005;
 }
 
 .icons svg:active {
-
   border: 2px inset #000;
 }
 
@@ -334,6 +354,41 @@ const storeConfig = async () => {
     }, 1000)
   })
   config.value = await response.json()
+}
+
+const moveModule = (index: number, down: boolean) => {
+  const temp = config.value.modules[index]
+  if (down) {
+    config.value.modules[index] = config.value.modules[index + 1]
+    config.value.modules[index + 1] = temp
+  } else {
+    config.value.modules[index] = config.value.modules[index - 1]
+    config.value.modules[index - 1] = temp
+  }
+}
+
+const disposeModule = (index: number) => {
+  config.value.modules.splice(index, 1)
+}
+
+const appendModule = (index: any) => {
+
+  // get module
+  const module = modules[index]
+
+  // create new module
+  const newModule = {
+    name: module.name,
+    version: module.version,
+    config: {}
+  }
+
+  // add config
+  for (const key in module.config) {
+    newModule.config[key] = module.config[key].default
+  }
+
+  config.value.modules.push(newModule)
 }
 
 // dev mode

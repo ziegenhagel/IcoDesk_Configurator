@@ -5,7 +5,7 @@
   "author": "Sergey",
   "license": "MIT",
   "views": 5,
-  "options": [
+  "config": [
     {
       "name": "nsfw",
       "type": "boolean",

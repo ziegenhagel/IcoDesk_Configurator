@@ -7,8 +7,7 @@ export const useModules = () => {
             "description": "Weather app",
             "author": "Sergey",
             "license": "MIT",
-            "views": 2,
-            "options": [
+            "config": [
                 {
                     "name": "city",
                     "type": "string",
@@ -42,8 +41,7 @@ export const useModules = () => {
             "description": "Sprichwuerfel app",
             "author": "Dmitry",
             "license": "MIT",
-            "views": 5,
-            "options": [
+            "config": [
                 {
                     "name": "nsfw",
                     "type": "boolean",
