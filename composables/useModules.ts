@@ -10,7 +10,7 @@ export const useModules = () => {
             "config": [
                 {
                     "name": "city",
-                    "type": "string",
+                    "type": "text",
                     "default": "Moscow"
                 },
                 {
@@ -19,7 +19,7 @@ export const useModules = () => {
                     "default": 600,
                     "min": 60,
                     "max": 3600,
-                    "step": 1
+                    "step": 2
                 },
                 {
                     "name": "speed",
@@ -45,7 +45,7 @@ export const useModules = () => {
                 {
                     "name": "nsfw",
                     "type": "boolean",
-                    "default": false
+                    "default": true
                 },
                 {
                     "name": "language",

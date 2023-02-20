@@ -23,32 +23,49 @@
           {{ color.name }}
         </div>
         <h2>Module</h2>
-        <div class="flex" v-if="config?.modules.length>0" v-for="(module,index) in config.modules">
-          <div>{{ index }}-{{ module.name }}</div>
-          <div class="icons">
-            <svg @click="moveModule(index,false)" :class="{disabled:index==0}" xmlns="http://www.w3.org/2000/svg"
-                 fill="none" viewBox="0 0 24 24"
-                 stroke-width="1.5"
-                 stroke="currentColor" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"/>
-            </svg>
-            <svg @click="moveModule(index,true)" :class="{disabled:index>=config.modules.length-1}"
-                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                 stroke-width="1.5"
-                 stroke="currentColor" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
-            </svg>
+        <div class="flex-col module" v-if="config?.modules.length>0" v-for="(module,index) in config.modules">
+          <div class="flex">
+            <div>{{ index }}-{{ module.name }}</div>
+            <div class="icons">
+              <svg @click="moveModule(index,false)" :class="{disabled:index==0}" xmlns="http://www.w3.org/2000/svg"
+                   fill="none" viewBox="0 0 24 24"
+                   stroke-width="1.5"
+                   stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"/>
+              </svg>
+              <svg @click="moveModule(index,true)" :class="{disabled:index>=config.modules.length-1}"
+                   xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                   stroke-width="1.5"
+                   stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+              </svg>
+              <svg @click="disposeModule(index)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                   stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+              </svg>
+            </div>
+          </div>
+          <div class="option" v-for="option in getOptions(module.name)">
+            <div class="flex">
+              {{ option.name }}
 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                 stroke="currentColor" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/>
-            </svg>
-            <svg @click="disposeModule(index)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
+              <input v-model="module.config[option.name]" v-if="option.type=='text'" type="text"/>
+              <input v-model="module.config[option.name]" v-else-if="option.type=='number'" :step="option.step"
+                     :min="option.min" :max="option.max" type="number"/>
 
+              <select v-model="module.config[option.name]" v-if="option.type=='enum'">
+                <option disabled value="">Bitte wählen</option>
+                <option v-for="value in option.values" :value="value">{{ value }}</option>
+              </select>
+
+              <select v-model="module.config[option.name]" v-if="option.type=='boolean'">
+                <option disabled value="">Bitte wählen</option>
+                <option :value="true">true</option>
+                <option :value="false">false</option>
+              </select>
+
+            </div>
           </div>
         </div>
         <div v-else>Keine Module aktiviert.</div>
@@ -57,7 +74,8 @@
         <div class="flex" v-if="modules" v-for="(module,index) in modules">
           <div>{{ module.name }}</div>
           <div class="icons">
-            <svg @click="appendModule(index)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            <svg @click="appendModule(index)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke-width="1.5"
                  stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
             </svg>
@@ -66,7 +84,7 @@
         <div v-else>Keine Module gefunden.</div>
 
       </aside>
-      <div id="premodule">
+      <div id="preview">
         <img id="module" src="ui/View01.jpg"/>
       </div>
     </main>
@@ -74,6 +92,18 @@
 </template>
 
 <style>
+.module {
+  background: #0005;
+  padding: 6px 4px;
+  padding-bottom: 0;
+  margin-top: 5px;
+  border: 1px outset #000;
+}
+
+.module .option {
+  color: gray;
+}
+
 @font-face {
   font-family: 'vt323';
   src: url('ui/vt323.ttf');
@@ -162,7 +192,7 @@ aside {
   color: #f3f1e7;
 }
 
-#premodule {
+#preview {
   flex: 4;
   height: 100%;
   background-color: #000;
@@ -171,6 +201,29 @@ aside {
   background-repeat: no-repeat;
   background-position: center;
   position: relative;
+}
+
+#preview svg {
+  height: 5vh;
+  width: 5vh;
+  opacity: .2;
+  cursor: pointer;
+}
+
+#preview svg:hover {
+  opacity: 1;
+}
+
+#preview nav {
+  position: absolute;
+  position: absolute;
+  top: 45%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  margin-left: -10vw;
 }
 
 #module {
@@ -186,13 +239,13 @@ aside {
   height: 32%;
 }
 
-input {
+select, input {
   border: 2px inset #000;
   background: #0001;
   border-radius: 4px;
 }
 
-input, .eightbit-btn {
+select, input, .eightbit-btn {
   background: #92CD41;
   display: inline-block;
   border: none;
@@ -271,7 +324,7 @@ button {
   border: 2px inset #000;
 }
 
-input {
+select, input {
   background: #bbb;
   outline: none;
   text-align: left;
@@ -312,6 +365,26 @@ input {
   box-sizing: border-box;
 }
 
+.option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.option > * {
+  flex: 1;
+}
+
+.option input, .option option, .option select {
+  padding: 0 2px;
+  width:100%;
+  flex:1;
+  line-height: 1rem;
+  font-size: 1rem;
+  box-sizing: border-box;
+  border-width: 1px;
+}
 </style>
 
 <script lang="ts" setup>
@@ -323,7 +396,7 @@ const underlineVisible: boolean = ref(false)
 const speichernText: string = ref("Speichern >")
 
 // remote info
-const modules: Ref<any[]> = useModules()
+const modules = useModules()
 
 // have underline blink every .5 seconds
 setInterval(() => {
@@ -389,6 +462,11 @@ const appendModule = (index: any) => {
   }
 
   config.value.modules.push(newModule)
+}
+
+const getOptions = (name: String) => {
+  // from all the modules find the one with the name and get .config
+  return modules.find((module: any) => module.name === name)?.config
 }
 
 // dev mode
