@@ -11,9 +11,9 @@
   </div>
   <div v-else>
     <nav class="top">
-      <button class="eightbit-btn eightbit-btn--proceed" @click="editMode=false">&lt; Zurück</button>
+      <button class="eightbit-btn eightbit-btn--proceed" style="filter:saturate(0) brightness(.9)" @click="editMode=false">&lt; Zurück</button>
       <h1>Geräte-ID: {{ id }}</h1>
-      <button class="eightbit-btn" @click="storeConfig()">{{ speichernText }}</button>
+        <button :class="{'eightbit-btn':true, 'eightbit-btn--proceed':unsafedChanges}" @click="storeConfig()">{{ speichernText }}</button>
     </nav>
 
     <main>
@@ -24,7 +24,8 @@
           {{ color.name }}
         </div>
         <h2>Module</h2>
-        <div class="flex-col module" v-if="config?.modules.length>0" v-for="(module,index) in config.modules">
+        <div class="flex-col module" @mouseover="tryPreview(module.name)" v-if="config?.modules.length>0"
+             v-for="(module,index) in config.modules">
           <div class="flex">
             <div>{{ index }}-{{ module.name }}</div>
             <div class="icons">
@@ -440,6 +441,7 @@ const storeConfig = async () => {
     body: JSON.stringify(config.value)
   }).then(() => {
     speichernText.value = "Gespeichert."
+    unsafedChanges.value = false
     setTimeout(() => {
       speichernText.value = "Speichern >"
     }, 1000)
@@ -548,6 +550,13 @@ const preview = (url) => {
   drawModule()
 }
 
+const tryPreview = (moduleName) => {
+  const module = modules.value.find((module: any) => module.name === moduleName)
+  if (module) {
+    preview(module.view)
+  }
+}
+
 const view = ref("/ui/view.png")
 
 // dev mode
@@ -613,6 +622,13 @@ const loadModules = async () => {
       })
 
 }
-
 loadModules()
+
+const unsafedChanges = ref(false)
+
+// watch for changes in config.value or any of its children
+watch(config, () => {
+  unsafedChanges.value = true
+}, {deep: true})
+
 </script>
