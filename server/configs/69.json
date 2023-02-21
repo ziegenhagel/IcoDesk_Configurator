@@ -1,0 +1,1 @@
+{"version":"1.0.0","colors":[{"name":"Background","hex":"#000000"},{"name":"Foreground","hex":"#ffffff"},{"name":"Accent","hex":"#00ffff"},{"name":"Danger","hex":"#ff0000"}],"modules":[{"name":"Weather","version":"1.0.0","config":{"city":"dresden","privateKey":"Get your key from https://openweathermap.org/","refreshTime":60000}}]}

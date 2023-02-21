@@ -425,6 +425,9 @@ setInterval(() => {
 const edit = () => {
   loadConfig()
   editMode.value = true
+  setTimeout(() => {
+    drawModule()
+  }, 100)
 }
 
 const loadConfig = async () => {
@@ -504,6 +507,7 @@ const drawModule = () => {
   // draw /view.jpg onto canvas
   const img = new Image()
   img.src = view.value
+  console.log("drawing image", img.src)
   img.crossOrigin = "Anonymous";
   img.onload = () => {
     ctx.drawImage(img, 0, 0)
@@ -629,6 +633,10 @@ const unsavedChanges = ref(false)
 // watch for changes in config.value or any of its children
 watch(config, () => {
   unsavedChanges.value = true
+}, {deep: true})
+
+watch(modules, () => {
+  drawModule()
 }, {deep: true})
 
 </script>
