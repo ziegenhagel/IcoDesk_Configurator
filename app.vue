@@ -435,12 +435,12 @@ const edit = () => {
 }
 
 const loadConfig = async () => {
-  const response = await fetch(`http://localhost:3000/api/config/${id.value}`)
+  const response = await fetch(`/api/config/${id.value}`)
   config.value = await response.json()
 }
 
 const storeConfig = async () => {
-  const response = await fetch(`http://localhost:3000/api/config/${id.value}`, {
+  const response = await fetch(`/api/config/${id.value}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
