@@ -11,9 +11,13 @@
   </div>
   <div v-else>
     <nav class="top">
-      <button class="eightbit-btn eightbit-btn--proceed" style="filter:saturate(0) brightness(.9)" @click="editMode=false">&lt; Zurück</button>
+      <button class="eightbit-btn eightbit-btn--proceed" style="filter:saturate(0) brightness(.9)"
+              @click="editMode=false">&lt; Zurück
+      </button>
       <h1>Geräte-ID: {{ id }}</h1>
-        <button :class="{'eightbit-btn':true, 'eightbit-btn--proceed':unsavedChanges}" @click="storeConfig()">{{ speichernText }}</button>
+      <button :class="{'eightbit-btn':true, 'eightbit-btn--proceed':unsavedChanges}" @click="storeConfig()">
+        {{ speichernText }}
+      </button>
     </nav>
 
     <main>
