@@ -77,11 +77,11 @@ The following table shows all the possible keys and their values.
 The `config` object contains all the information about the configuration of the module. Required for the IcoDesk
 Configurator.
 
-| Key                  | Value  | Required             | Description                                                                  |
-|----------------------|--------|----------------------|------------------------------------------------------------------------------|
-| `name`               | String | Yes                  | The name of the option. This is also the name used in the module config.     | 
-| `type`               | String | Yes                  | The type of the option. Possible values: `text`, `number`, `boolean`, `enum` |
-| `default`            | String | Yes                  | The default value of the option.                                             |
-| `description`        | String | No                   | A short description of the option.                                           |
-| `min`, `max`, `step` | Number | If `type` = `number` | The minimum, maximum values and the step size of the value.                  |
-| `options`            | Array  | If `type` = `enum`   | The options for the enum.                                                    |
+| Key                  | Value  | Required              | Description                                                                  |
+|----------------------|--------|-----------------------|------------------------------------------------------------------------------|
+| `name`               | String | Yes                   | The name of the option. This is also the name used in the module config.     | 
+| `type`               | String | Yes                   | The type of the option. Possible values: `text`, `number`, `boolean`, `enum` |
+| `default`            | `type` | Yes                   | The default value of the option.                                             |
+| `min`, `max`, `step` | Number | If `type` == `number` | The minimum, maximum values and the step size of the value.                  |
+| `options`            | Array  | If `type` == `enum`   | The options for the enum.                                                    |
+| `description`        | String | No                    | A short description of the option.                                           |
