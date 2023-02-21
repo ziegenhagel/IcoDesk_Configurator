@@ -93,7 +93,7 @@ export const useModules = async () => {
                 {
                     "name": "language",
                     "type": "enum",
-                    "values": [
+                    "options": [
                         "en",
                         "ru"
                     ],

@@ -62,7 +62,7 @@
 
               <select v-model="module.config[option.name]" v-if="option.type=='enum'">
                 <option disabled value="">Bitte wählen</option>
-                <option v-for="value in option.values" :value="value">{{ value }}</option>
+                <option v-for="value in option.options" :value="value">{{ value }}</option>
               </select>
 
               <select v-model="module.config[option.name]" v-if="option.type=='boolean'">
