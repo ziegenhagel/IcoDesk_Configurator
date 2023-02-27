@@ -5,7 +5,7 @@
       <h1 style="margin:auto;text-align: center;margin-bottom: 1em">IcoDesk<br/>Configurator<span
           :style="{visibility: underlineVisible ? 'visible' : 'hidden'}">_</span></h1>
       <p style="margin:0;text-align: center">Geräte-ID:</p>
-      <input v-model="id" style="text-align:center" placeholder="ID eingeben"/>
+      <input autofocus v-model="id" style="text-align:center" placeholder="ID eingeben" @keyup.enter="edit()"/>
       <button class="eightbit-btn" @click="edit()">Konfigurieren &gt;</button>
     </div>
   </div>
